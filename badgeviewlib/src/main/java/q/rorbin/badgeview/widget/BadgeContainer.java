@@ -42,6 +42,7 @@ public class BadgeContainer extends ViewGroup {
         if (targetView == null) {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         } else {
+            //优先测量子类
             targetView.measure(widthMeasureSpec, heightMeasureSpec);
             if (badgeView != null) {
                 badgeView.measure(MeasureSpec.makeMeasureSpec(targetView.getMeasuredWidth(), MeasureSpec.EXACTLY),
