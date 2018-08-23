@@ -2,12 +2,15 @@ package q.rorbin.badgeview.widget;
 
 import android.content.Context;
 import android.os.Parcelable;
+import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 public class BadgeContainer extends ViewGroup {
+
+    private View targetView = null, badgeView = null;
 
     @Override
     protected void dispatchRestoreInstanceState(SparseArray<Parcelable> container) {
@@ -30,7 +33,6 @@ public class BadgeContainer extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        View targetView = null, badgeView = null;
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
             if (child instanceof QBadgeView) {
@@ -50,5 +52,13 @@ public class BadgeContainer extends ViewGroup {
             }
             setMeasuredDimension(targetView.getMeasuredWidth(), targetView.getMeasuredHeight());
         }
+    }
+
+    public View getTargetView() {
+        return targetView;
+    }
+
+    public View getBadgeView() {
+        return badgeView;
     }
 }
