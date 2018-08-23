@@ -1,4 +1,4 @@
-package q.rorbin.badgeview;
+package q.rorbin.badgeview.widget;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -12,11 +12,9 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Parcelable;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,9 +26,14 @@ import android.widget.RelativeLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import q.rorbin.badgeview.Badge;
+import q.rorbin.badgeview.BadgeAnimator;
+import q.rorbin.badgeview.DisplayUtil;
+import q.rorbin.badgeview.MathUtil;
+
 /**
  * @author chqiu
- *         Email:qstumn@163.com
+ * Email:qstumn@163.com
  */
 
 public class QBadgeView extends View implements Badge {
@@ -137,7 +140,7 @@ public class QBadgeView extends View implements Badge {
     }
 
     @Override
-    public Badge bindTarget(final View targetView) {
+    public Badge bindTarget(View targetView) {
         if (targetView == null) {
             throw new IllegalStateException("targetView can not be null");
         }
@@ -155,7 +158,7 @@ public class QBadgeView extends View implements Badge {
                 ViewGroup.LayoutParams targetParams = targetView.getLayoutParams();
                 targetContainer.removeView(targetView);
                 final BadgeContainer badgeContainer = new BadgeContainer(getContext());
-                if(targetContainer instanceof RelativeLayout){
+                if (targetContainer instanceof RelativeLayout) {
                     badgeContainer.setId(targetView.getId());
                 }
                 targetContainer.addView(badgeContainer, index, targetParams);
@@ -207,7 +210,7 @@ public class QBadgeView extends View implements Badge {
                         && mBadgeText != null) {
                     initRowBadgeCenter();
                     mDragging = true;
-                    updataListener(OnDragStateChangedListener.STATE_START);
+                    updateListener(OnDragStateChangedListener.STATE_START);
                     mDefalutRadius = DisplayUtil.dp2px(getContext(), 7);
                     getParent().requestDisallowInterceptTouchEvent(true);
                     screenFromWindow(true);
@@ -237,10 +240,10 @@ public class QBadgeView extends View implements Badge {
     private void onPointerUp() {
         if (mDragOutOfRange) {
             animateHide(mDragCenter);
-            updataListener(OnDragStateChangedListener.STATE_SUCCEED);
+            updateListener(OnDragStateChangedListener.STATE_SUCCEED);
         } else {
             reset();
-            updataListener(OnDragStateChangedListener.STATE_CANCELED);
+            updateListener(OnDragStateChangedListener.STATE_CANCELED);
         }
     }
 
@@ -311,10 +314,10 @@ public class QBadgeView extends View implements Badge {
                 mDragQuadrant = MathUtil.getQuadrant(mDragCenter, mRowBadgeCenter);
                 showShadowImpl(mShowShadow);
                 if (mDragOutOfRange = startCircleRadius < DisplayUtil.dp2px(getContext(), 1.5f)) {
-                    updataListener(OnDragStateChangedListener.STATE_DRAGGING_OUT_OF_RANGE);
+                    updateListener(OnDragStateChangedListener.STATE_DRAGGING_OUT_OF_RANGE);
                     drawBadge(canvas, mDragCenter, badgeRadius);
                 } else {
-                    updataListener(OnDragStateChangedListener.STATE_DRAGGING);
+                    updateListener(OnDragStateChangedListener.STATE_DRAGGING);
                     drawDragging(canvas, startCircleRadius, badgeRadius);
                     drawBadge(canvas, mDragCenter, badgeRadius);
                 }
@@ -810,7 +813,7 @@ public class QBadgeView extends View implements Badge {
     }
 
 
-    private void updataListener(int state) {
+    private void updateListener(int state) {
         if (mDragStateChangedListener != null)
             mDragStateChangedListener.onDragStateChanged(state, this, mTargetView);
     }
@@ -828,48 +831,5 @@ public class QBadgeView extends View implements Badge {
         return null;
     }
 
-    private class BadgeContainer extends ViewGroup {
 
-        @Override
-        protected void dispatchRestoreInstanceState(SparseArray<Parcelable> container) {
-            if(!(getParent() instanceof RelativeLayout)){
-                super.dispatchRestoreInstanceState(container);
-            }
-        }
-
-        public BadgeContainer(Context context) {
-            super(context);
-        }
-
-        @Override
-        protected void onLayout(boolean changed, int l, int t, int r, int b) {
-            for (int i = 0; i < getChildCount(); i++) {
-                View child = getChildAt(i);
-                child.layout(0, 0, child.getMeasuredWidth(), child.getMeasuredHeight());
-            }
-        }
-
-        @Override
-        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-            View targetView = null, badgeView = null;
-            for (int i = 0; i < getChildCount(); i++) {
-                View child = getChildAt(i);
-                if (!(child instanceof QBadgeView)) {
-                    targetView = child;
-                } else {
-                    badgeView = child;
-                }
-            }
-            if (targetView == null) {
-                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-            } else {
-                targetView.measure(widthMeasureSpec, heightMeasureSpec);
-                if (badgeView != null) {
-                    badgeView.measure(MeasureSpec.makeMeasureSpec(targetView.getMeasuredWidth(), MeasureSpec.EXACTLY),
-                            MeasureSpec.makeMeasureSpec(targetView.getMeasuredHeight(), MeasureSpec.EXACTLY));
-                }
-                setMeasuredDimension(targetView.getMeasuredWidth(), targetView.getMeasuredHeight());
-            }
-        }
-    }
 }

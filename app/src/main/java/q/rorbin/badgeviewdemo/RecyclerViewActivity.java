@@ -14,7 +14,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import q.rorbin.badgeview.Badge;
-import q.rorbin.badgeview.QBadgeView;
+import q.rorbin.badgeview.widget.QBadgeView;
 
 public class RecyclerViewActivity extends AppCompatActivity {
     RecyclerView recyclerView;

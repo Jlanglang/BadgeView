@@ -5,15 +5,13 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.util.Log;
 
 import java.lang.ref.WeakReference;
 import java.util.Random;
 
-import static android.content.ContentValues.TAG;
+import q.rorbin.badgeview.widget.QBadgeView;
 
 /**
  * @author chqiu
